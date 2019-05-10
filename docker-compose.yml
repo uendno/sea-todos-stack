@@ -12,11 +12,15 @@ services:
       - "3306:3306"
     volumes:
       - sea-todos-mysql:/var/lib/mysql
+    networks:
+      - sea-todos
   sea-todos-redis:
-    image: redis  
+    image: redis
     restart: unless-stopped
     ports:
       - "6379:6379"
+    networks:
+      - sea-todos
   sea-todos-celery-worker:
     build:
       context: ./sea-todos-backend
@@ -26,7 +30,9 @@ services:
     depends_on:
       - sea-todos-redis
     environment:
-       CELERY_BROKER_URL: redis://sea-todos-redis
+      CELERY_BROKER_URL: redis://sea-todos-redis
+    networks:
+      - sea-todos
   sea-todos-backend:
     build:
       context: ./sea-todos-backend
@@ -39,6 +45,8 @@ services:
        CELERY_BROKER_URL: redis://sea-todos-redis
     ports:
       - "8080:80"
+    networks:
+      - sea-todos
   sea-todos-frontend:
     build:
       context: ./sea-todos-frontend
@@ -47,6 +55,10 @@ services:
         REACT_APP_ENV: ${ENV}
     ports:
       - "3000:5000"
+    networks:
+      - sea-todos
 
 volumes:
   sea-todos-mysql:
+networks:
+  sea-todos
