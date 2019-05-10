@@ -1,0 +1,52 @@
+version: '3.5'
+services:
+  sea-todos-mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_USER: gotit
+      MYSQL_PASSWORD: 123456
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: sea_todos
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    volumes:
+      - sea-todos-mysql:/var/lib/mysql
+  sea-todos-redis:
+    image: redis  
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+  sea-todos-celery-worker:
+    build:
+      context: ./sea-todos-backend
+      dockerfile: CeleryWorkerDockerfile
+      args:
+        ENV: ${ENV}
+    depends_on:
+      - sea-todos-redis
+    environment:
+       CELERY_BROKER_URL: redis://sea-todos-redis
+  sea-todos-backend:
+    build:
+      context: ./sea-todos-backend
+      dockerfile: Dockerfile
+      args:
+        ENV: ${ENV}
+    depends_on:
+      - sea-todos-redis
+    environment:
+       CELERY_BROKER_URL: redis://sea-todos-redis
+    ports:
+      - "8080:80"
+  sea-todos-frontend:
+    build:
+      context: ./sea-todos-frontend
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_ENV: ${ENV}
+    ports:
+      - "3000:5000"
+
+volumes:
+  sea-todos-mysql:

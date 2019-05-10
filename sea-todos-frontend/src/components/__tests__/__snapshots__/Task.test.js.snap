@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/Task should render correctly 1`] = `
+<li
+  className="completed"
+>
+  <div
+    className="view"
+  >
+    <input
+      checked={true}
+      className="toggle"
+      onChange={[Function]}
+      onClick={[Function]}
+      type="checkbox"
+    />
+    <label>
+      Some task
+    </label>
+  </div>
+</li>
+`;
