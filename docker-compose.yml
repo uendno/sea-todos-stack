@@ -65,3 +65,4 @@ volumes:
   sea-todos-mysql:
 networks:
   sea-todos:
+    driver: overlay
